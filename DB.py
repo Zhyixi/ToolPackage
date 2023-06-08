@@ -293,10 +293,10 @@ class DbConnector:
             try:
                 query_result_list = []
                 for query in query_list:
-                    query = query.upper()
                     select_sql_str = re.findall(string=query, pattern=r"SELECT")
+                    select_sql_str2 = re.findall(string=query, pattern=r"select")
                     self.cursor.execute(query)
-                    if len(select_sql_str) != 0:
+                    if len(select_sql_str) != 0 | len(select_sql_str2) != 0:
                         data = self.cursor.fetchall()
                         cols = list(map(lambda x: x[0], self.cursor.description))
                         dataframe = pd.DataFrame(data, columns=cols)
