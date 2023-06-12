@@ -290,25 +290,22 @@ class DbConnector:
                 else:
                     return query_result_list
         elif self.db_type == 'sqlserver':
-            try:
-                query_result_list = []
-                for query in query_list:
-                    select_sql_str = re.findall(string=query, pattern=r"SELECT")
-                    select_sql_str2 = re.findall(string=query, pattern=r"select")
+            query_result_list = []
+            for query in query_list:
+                select_sql_str = re.findall(string=query, pattern=r"SELECT")
+                select_sql_str2 = re.findall(string=query, pattern=r"select")
+                try:
                     self.cursor.execute(query)
-                    if len(select_sql_str) != 0 | len(select_sql_str2) != 0:
-                        data = self.cursor.fetchall()
-                        cols = list(map(lambda x: x[0], self.cursor.description))
-                        dataframe = pd.DataFrame(data, columns=cols)
-                        query_result_list.append(dataframe)
-                    else:
-                        query_result_list.append(True)
-                    self.connection.commit()
-            except (Exception, cx_Oracle.Error) as error:
-                self.cursor.execute("ROLLBACK")
-                logging.info("Error while connecting to postgres, The error is\n{}".format(error))
-            finally:
-                if len(query_result_list) == 0:
-                    return [pd.DataFrame([])]
+                except Exception as err:
+                    self.cursor.execute("ROLLBACK")
+                    logging.info("Error while connecting to sqlserver, The error is\n{}".format(err))
+                    return [False]
+                if len(select_sql_str) != 0 | len(select_sql_str2) != 0:
+                    data = self.cursor.fetchall()
+                    cols = list(map(lambda x: x[0], self.cursor.description))
+                    dataframe = pd.DataFrame(data, columns=cols)
+                    query_result_list.append(dataframe)
                 else:
-                    return query_result_list
+                    query_result_list.append(True)
+                self.connection.commit()
+            return query_result_list
