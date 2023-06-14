@@ -11,6 +11,11 @@ import pandas as pd
 import pyodbc 
 import numpy as np
 
+import cx_Oracle
+
+# 设置 Oracle 客户端路径
+cx_Oracle.init_oracle_client(lib_dir=r'D:\UR08366\instantclient_11_2')
+
 class DbConnector:
     def __init__(self, db_info):
         self.db_type = db_info["db_type"]
