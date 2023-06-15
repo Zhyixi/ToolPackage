@@ -14,7 +14,10 @@ import numpy as np
 import cx_Oracle
 
 # 设置 Oracle 客户端路径
-cx_Oracle.init_oracle_client(lib_dir=r'D:\UR08366\instantclient_11_2')
+try:
+    cx_Oracle.init_oracle_client(lib_dir=r'D:\UR08366\instantclient_11_2')
+except:
+    pass
 
 class DbConnector:
     def __init__(self, db_info):
@@ -25,6 +28,7 @@ class DbConnector:
         self.host_info = db_info["host"]
         self.port_info = db_info["port"]
         if self.db_type == 'oracle':
+            print(db_info)
             dsn_tns = cx_Oracle.makedsn(self.host_info, self.port_info, service_name=self.database_info)
             self.connection = cx_Oracle.connect(user=self.user_info, password=self.password_info, dsn=dsn_tns,
                                                 encoding='UTF-8')
